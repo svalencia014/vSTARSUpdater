@@ -1,7 +1,12 @@
 import json
 from os.path import exists
 import os
+from pathlib import Path
+
 import requests
+from zipfile import ZipFile
+import gzip
+import glob
 
 if (exists("C:\\vSTARSUpdater")):
     os.chdir("C:\\vSTARSUpdater")
@@ -36,10 +41,11 @@ for key in facilities:
             print("Profile has been updated before")
             f = open(path + "airac.txt", "r")
             airac = f.read()
-            if str(airac) != str(configJson["Current"]):
+            if str(airac) != str(configJson["Current"]): # Swap to == after testing
                 print("Profile is up to date")
             else:
                 print("Profile is out of date")
+
                 url = str(facility['URL'])
                 x = url.split("/")
                 for i in x:
@@ -50,6 +56,21 @@ for key in facilities:
                     x = x.replace('%20', '_')
                 r = requests.get(url)
                 open(path + x, "wb").write(r.content)
+
+                if x.endswith(".zip"): # ZDC Does this cause they wierd
+                    with ZipFile(path + x, 'r') as zipObj:
+                        zipObj.extractall(path)
+                    os.remove(path + x)
+                    x = x.replace('.zip', '.gz')
+                    y = str(glob.glob(path + '*.gz')).replace('[', '').replace(']', '').replace("'", '')
+                else:
+                    y = path + x
+
+                #   Open GZ file
+                with gzip.open(y, 'rb') as f:
+                    file_content = f.read()
+                    y = y.replace('.gz', '.xml')
+                    open(y, "wb").write(file_content)
                 print(x)
 
         else:
