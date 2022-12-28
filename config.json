@@ -1,0 +1,23 @@
+{
+    "ARTCCs":[
+        "ZJX",
+        "ZDC"
+    ],
+    "Current": "2212",
+    "ZJX": {
+        "Facilities": [
+            {
+                "Name": "KPNS",
+                "URL": "https://zjxartcc.org/media/doc/vSTARS_Facility_-_Pensacola_TRACON_P31_QO3EJPr.gz"
+            }
+        ]
+    },
+    "ZDC": {
+        "Facilities": [
+            {
+                "Name": "KACY",
+                "URL": "https://vzdc.org/storage/files/Atlantic%20City%20TRACON%20(ACY)_1652986429.zip"
+            }
+        ]
+    }
+}

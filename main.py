@@ -1,14 +1,14 @@
 import json
 from os.path import exists
 import os
-from pathlib import Path
+import xml.etree.ElementTree as elementTree
 
 import requests
 from zipfile import ZipFile
 import gzip
 import glob
 
-if (exists("C:\\vSTARSUpdater")):
+if exists("C:\\vSTARSUpdater"):
     os.chdir("C:\\vSTARSUpdater")
 else:
     os.mkdir("C:\\vSTARSUpdater")
@@ -26,9 +26,17 @@ for artcc in artccs:
 
 print(facilities)
 
+
+def parse_xml(file):
+    tree = elementTree.parse(file)
+    root = tree.getroot()
+    for elem in root.iter():
+        print(elem.tag, elem.attrib)
+
+
 for key in facilities:
     path = "C:\\vSTARSUpdater\\" + key + "\\"
-    if (exists(path)):
+    if exists(path):
         print("ARTCC has been updated before")
     else:
         print("New ARTCC Detected")
@@ -37,12 +45,13 @@ for key in facilities:
     for facility in facilities[key]:
         path += str(facility['Name']) + "\\"
         print(path)
-        if (exists(path)):
+        if exists(path):
             print("Profile has been updated before")
             f = open(path + "airac.txt", "r")
             airac = f.read()
-            if str(airac) != str(configJson["Current"]): # Swap to == after testing
+            if str(airac) != str(configJson["Current"] or not exists(path + "airac.txt")):   # Swap to == after testing
                 print("Profile is up to date")
+
             else:
                 print("Profile is out of date")
 
@@ -71,11 +80,5 @@ for key in facilities:
                     file_content = f.read()
                     y = y.replace('.gz', '.xml')
                     open(y, "wb").write(file_content)
+                    parse_xml(y)
                 print(x)
-
-        else:
-            print("New Profile Detected")
-            os.mkdir(path)
-            f = open(path + "airac.txt", "x")
-            f.write("2212")
-            f.close()
